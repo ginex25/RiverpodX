@@ -1,0 +1,35 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+  <!-- Unique identifier of the plugin. It should be FQN. It cannot be changed between the plugin versions. -->
+  <id>com.github.ginex25.RiverpodX</id>
+
+  <!-- Public plugin name should be written in Title Case.
+       Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-name -->
+  <name>RiverpodX</name>
+
+  <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
+  <vendor email="domemails@pm.me">ginex25</vendor>
+
+  <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
+       Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
+       Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
+  <description><![CDATA[
+    Boost your Flutter development with Riverpod! This plugin enhances your workflow by offering a set of useful tools specifically designed for working with Riverpod.<br>
+    <ul>
+        <li><strong>Code Snippets</strong>: Quickly insert Riverpod boilerplate code.</li>
+        <li><strong>Widget Conversion</strong>: Seamlessly convert <code>ConsumerWidget</code> to <code>ConsumerStatefulWidget</code> with a simple action.</li>
+        <li><strong>Goto Method for Generated Providers</strong>: Navigate directly to the method for generated Riverpod providers for quicker access to your code.</li>
+    </ul>
+    Perfect for Flutter developers using Riverpod, this plugin helps speed up your development by automating repetitive tasks and providing quick access to common patterns.
+]]></description>
+  <!-- Product and plugin compatibility requirements.
+       Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
+  <depends>com.intellij.modules.platform</depends>
+
+  <!-- Extension points defined by the plugin.
+       Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
+  <extensions defaultExtensionNs="com.intellij">
+      <defaultLiveTemplates file="/liveTemplates/snippets.xml" /> 
+      <liveTemplateContext contextId="RIVERPOD_SNIPPETS" implementation="com.github.ginex25.riverpodx.snippets.SnippetsContext" />
+  </extensions>
+</idea-plugin>
