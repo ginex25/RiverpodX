@@ -3,6 +3,7 @@
     <name>RiverpodX</name>
     <version>1.0.0</version>
     <vendor url="https://github.com/ginex25/RiverpodX">ginex25</vendor>
+    <idea-version since-build="241.0"/>
 
     <description><![CDATA[
     Boost your Flutter development with Riverpod! This plugin enhances your workflow by offering a set of useful tools specifically designed for working with Riverpod.<br>
@@ -11,15 +12,22 @@
         <li><strong>Widget Conversion</strong>: Seamlessly convert <code>ConsumerWidget</code> to <code>ConsumerStatefulWidget</code> with a simple action.</li>
         <li><strong>Goto Method for Generated Providers</strong>: Navigate directly to the method for generated Riverpod providers for quicker access to your code.</li>
     </ul>
-    Perfect for Flutter developers using Riverpod, this plugin helps speed up your development by automating repetitive tasks and providing quick access to common patterns.
-]]></description>
+  ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
+    <depends>io.flutter</depends>
+    <depends>org.jetbrains.android</depends>
+
     <extensions defaultExtensionNs="com.intellij">
         <defaultLiveTemplates file="/liveTemplates/snippets.xml"/>
         <liveTemplateContext contextId="RIVERPOD_SNIPPETS"
                              implementation="com.github.ginex25.riverpodx.snippets.SnippetsContext"/>
         <fileBasedIndex implementation="com.github.ginex25.riverpodx.index.ProviderIndex"/>
         <gotoDeclarationHandler implementation="com.github.ginex25.riverpodx.navigation.CustomGotoDeclarationHandler"/>
+        <intentionAction>
+            <language>Dart</language>
+            <className>com.github.ginex25.riverpodx.intentions.ConvertConsumerToConsumerStatefulIntention</className>
+            <category>RiverpodX</category>
+        </intentionAction>
     </extensions>
 </idea-plugin>
