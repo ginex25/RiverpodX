@@ -7,86 +7,93 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.jetbrains.lang.dart.psi.DartClass
-import com.jetbrains.lang.dart.psi.DartComponent
-import com.jetbrains.lang.dart.psi.DartMethodDeclaration
+import com.jetbrains.lang.dart.psi.*
+import com.jetbrains.lang.dart.util.DartElementGenerator
 
 class ConvertIntentionsUtils {
+    private fun isDartClass(psiElement: PsiElement): Boolean {
+        return PsiTreeUtil.getParentOfType(psiElement, DartClass::class.java) != null
+    }
+
     fun isConsumerWidget(psiElement: PsiElement): Boolean {
-        return psiElement.text.equals("ConsumerWidget")
+        return psiElement.text.equals("ConsumerWidget") && isDartClass(psiElement)
     }
 
     fun isConsumerStatefulWidget(psiElement: PsiElement): Boolean {
-        return psiElement.text.contains("ConsumerStatefulWidget")
+        return psiElement.text.contains("ConsumerStatefulWidget") && isDartClass(psiElement)
     }
 
     fun isStatelessWidget(psiElement: PsiElement): Boolean {
-        return psiElement.text.contains("StatelessWidget")
+        return psiElement.text.contains("StatelessWidget") && isDartClass(psiElement)
     }
 
     fun isStatefulWidget(psiElement: PsiElement): Boolean {
-        return psiElement.text.contains("StatefulWidget")
+        return psiElement.text.contains("StatefulWidget") && isDartClass(psiElement)
     }
 
-    fun convertConsumerToConsumerStateful(project: Project, editor: Editor, element: PsiElement) {
 
-        val classElement: DartClass = getDartClass(element) ?: return
-        val className = classElement.name ?: return
+    fun convertToConsumerStateful(project: Project, editor: Editor, element: PsiElement) {
+        val dartClass = getDartClass(element) ?: return
 
-        val fields: List<DartComponent> = classElement.fields.filterNot { it.name == "key" }
+        val className = dartClass.name ?: return
 
-        val constructor = classElement.constructors.firstOrNull()?.text ?: "  const $className({super.key});\n"
-        val methods: List<DartComponent> = classElement.methods
-        val buildMethod = methods.find { it.name == "build" } as? DartMethodDeclaration
+        val constructor = dartClass.constructors.firstOrNull()?.text ?: ""
 
-        val widgetClass = StringBuilder().apply {
-            append("class $className extends ConsumerStatefulWidget {\n")
-            fields.forEach { append("${it.text};\n") }
-            append(constructor)
-            append("  @override\n")
-            append("  ${className}State createState() => ${className}State();\n")
-            append("}\n\n")
-        }.toString()
+        val fields: List<DartComponent> = dartClass.fields.filter { it.isFinal && it.name != "key" }
 
-        val customCode: Pair<String, String>? = extractCustomCode(classElement)
+        val fieldUsages = findUsage(dartClass, fields)
 
+        val methods = dartClass.methods
 
-        val stateClass = StringBuilder().apply {
-            append("class ${className}State extends ConsumerState<$className> {\n\n")
-            if (customCode != null) {
-                append("    ${adjustFieldReferencesForStateClass(fields, customCode.first)}\n")
-            }
-            append("  @override\n")
-            if (buildMethod != null) {
-                var buildMethodText = buildMethod.text.replace(
-                    "Widget build(BuildContext context, WidgetRef ref)",
-                    "Widget build(BuildContext context)"
-                )
+        val buildMethod: DartComponent? = methods.find { it.name == "build" }
 
-                buildMethodText = buildMethodText.replace("@override", "")
-
-                buildMethodText = adjustFieldReferencesForStateClass(fields, buildMethodText)
-
-                append(buildMethodText.trim())
-            } else {
-                append("  Widget build(BuildContext context) {\n")
-                append("    return Container();\n")
-                append("  }\n")
-            }
-            if (customCode != null) {
-                append("    ${adjustFieldReferencesForStateClass(fields, customCode.second)}\n")
-            }
-            append("}\n")
-        }.toString()
-
-        val newClassText = widgetClass + stateClass
-
-        val document = editor.document
 
         WriteCommandAction.runWriteCommandAction(project) {
-            document.replaceString(classElement.textRange.startOffset, classElement.textRange.endOffset, newClassText)
+            adjustFieldReferencesForStateClass(project, fieldUsages)
 
-            PsiDocumentManager.getInstance(project).commitDocument(document)
+            val customCode: Pair<String, String>? = extractCustomCode(dartClass)
+
+            val stateClass = StringBuilder().apply {
+                append("class $className extends ConsumerStatefulWidget {\n")
+                fields.forEach { append("${it.text};\n") }
+                append(constructor)
+                append("  @override\n")
+                append("  ${className}State createState() => ${className}State();\n")
+                append("}\n\n")
+            }.toString()
+
+            val widgetClass = StringBuilder().apply {
+                append("class ${className}State extends ConsumerState<$className> {\n")
+                if (customCode != null) {
+                    append("    ${customCode.first}\n")
+                }
+                append("  @override\n")
+                if (buildMethod != null) {
+                    var buildMethodText = buildMethod.text.replace(
+                        "Widget build(BuildContext context, WidgetRef ref)", "Widget build(BuildContext context)"
+                    )
+
+                    buildMethodText = buildMethodText.replace("@override", "")
+
+                    append(buildMethodText.trim())
+                } else {
+                    append("  Widget build(BuildContext context) {\n")
+                    append("    return Container();\n")
+                    append("  }\n")
+                }
+                if (customCode != null) {
+                    append("    ${customCode.second}\n")
+                }
+                append("}")
+            }.toString()
+
+            val newClassText = stateClass + widgetClass
+
+            val document = editor.document
+
+            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document)
+
+            document.replaceString(dartClass.textRange.startOffset, dartClass.textRange.endOffset, newClassText)
 
             val psiFileUpdated =
                 PsiDocumentManager.getInstance(project).getPsiFile(document) ?: return@runWriteCommandAction
@@ -95,34 +102,79 @@ class ConvertIntentionsUtils {
         }
     }
 
-    private fun adjustFieldReferencesForStateClass(
-        fields: List<DartComponent>,
-        text: String
-    ): String {
-        var modifiedText = text
+    private fun findUsage(
+        dartClass: DartClass, fields: List<DartComponent>
+    ): MutableMap<String, MutableList<DartReferenceExpression>> {
+        val results = mutableMapOf<String, MutableList<DartReferenceExpression>>()
 
-        for (field in fields) {
-            val regex = Regex("""\$\b${field.name}\b""")
+        val fieldNames = fields.mapNotNull { it.name }.toSet()
 
-            modifiedText = regex.replace(modifiedText) { matchResult ->
-                "\${widget.${matchResult.value.substring(1)}}"
+        dartClass.accept(object : DartRecursiveVisitor() {
+            override fun visitReferenceExpression(expression: DartReferenceExpression) {
+                super.visitReferenceExpression(expression)
+                val name = expression.text
+
+                if (name !in fieldNames) return
+
+                val parameter = PsiTreeUtil.getParentOfType(expression, DartFieldFormalParameter::class.java)
+                val isConstructor = parameter?.text?.contains("this.${expression.text}") == true
+
+                if (isConstructor) return
+
+                val resolved = expression.reference?.resolve()
+
+                val component = resolved?.parent as? DartComponent
+
+                if (component is DartComponent && component.name == name) {
+                    results.getOrPut(name) { mutableListOf() }.add(expression)
+                }
             }
 
-            val wordRegex = Regex("""\w+\s*\(([^)]*)\)""")
+        })
 
-            val fieldRegex = Regex("""\b${field.name}\b""")
+        return results
+    }
 
-            modifiedText = wordRegex.replace(modifiedText) { matchResult ->
-                val fullMatch = matchResult.value
-                val args = matchResult.groupValues[1]
-                val newArgs = fieldRegex.replace(args) { "widget.${it.value}" }
+    private fun adjustFieldReferencesForStateClass(
+        project: Project, references: Map<String, List<DartReferenceExpression>>
+    ) {
+        val alreadyReplaced = mutableSetOf<DartStringLiteralExpression>()
 
-                fullMatch.replace(args, newArgs)
+        references.forEach { (originalName, expressions) ->
+            expressions.forEach { expression ->
+
+
+                val stringLiteral = PsiTreeUtil.getParentOfType(expression, DartStringLiteralExpression::class.java)
+
+                if (stringLiteral != null && stringLiteral !in alreadyReplaced) {
+                    alreadyReplaced += stringLiteral
+
+                    var newString = stringLiteral.text
+
+                    references.keys.forEach { fieldName ->
+                        newString = newString.replace("$$fieldName", "\${widget.$fieldName}")
+                    }
+
+                    val newLiteral = DartElementGenerator.createExpressionFromText(project, newString)
+
+                    if (newLiteral is DartStringLiteralExpression) {
+                        stringLiteral.replace(newLiteral)
+                    }
+
+                    return@forEach
+                }
+
+                val newText = "widget.$originalName"
+
+                val newReference = DartElementGenerator.createReferenceFromText(project, newText)
+
+                if (newReference is DartReferenceExpression) {
+                    expression.replace(newReference)
+                }
             }
         }
-
-        return modifiedText
     }
+
 
     private fun extractCustomCode(classElement: DartClass): Pair<String, String>? {
         val documentText = classElement.containingFile.fileDocument.text
@@ -134,13 +186,12 @@ class ConvertIntentionsUtils {
 
         val buildMethod = classElement.methods.find { it.name == "build" } as? DartMethodDeclaration ?: return null
 
-        val buildStart =
-            buildMethod.textRange.startOffset
+        val buildStart = buildMethod.textRange.startOffset
         val buildEnd = buildMethod.textRange.endOffset
 
         val textBetween: String
         try {
-            textBetween = documentText.substring(startOffset, buildStart)
+            textBetween = documentText.substring(startOffset, buildStart).trim()
         } catch (e: Exception) {
             return null
         }
@@ -148,7 +199,7 @@ class ConvertIntentionsUtils {
 
         val textAfterBuild: String
         try {
-            textAfterBuild = documentText.substring(buildEnd, fileEnd)
+            textAfterBuild = documentText.substring(buildEnd, fileEnd).trim()
         } catch (e: Exception) {
             return null
         }

@@ -26,7 +26,7 @@
         <gotoDeclarationHandler implementation="com.github.ginex25.riverpodx.navigation.CustomGotoDeclarationHandler"/>
         <intentionAction>
             <language>Dart</language>
-            <className>com.github.ginex25.riverpodx.intentions.ConvertConsumerToConsumerStatefulIntention</className>
+            <className>com.github.ginex25.riverpodx.intentions.ConvertToConsumerStatefulIntention</className>
             <category>RiverpodX</category>
         </intentionAction>
     </extensions>

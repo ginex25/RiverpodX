@@ -7,22 +7,24 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 
-class ConvertConsumerToConsumerStatefulIntention : PsiElementBaseIntentionAction(), IntentionAction {
+class ConvertToConsumerStatefulIntention : PsiElementBaseIntentionAction(), IntentionAction {
     private val convertIntentionsUtils = ConvertIntentionsUtils()
 
     override fun getFamilyName(): String = text
 
-    override fun getText(): String = "Convert ConsumerWidget to ConsumerStatefulWidget"
+    override fun getText(): String = "Convert to ConsumerStatefulWidget"
 
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
-        return convertIntentionsUtils.isConsumerWidget(element)
+        return convertIntentionsUtils.isConsumerWidget(element) || convertIntentionsUtils.isStatelessWidget(element)
     }
+
+    override fun startInWriteAction(): Boolean = true
 
     override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
         if (editor == null) return
 
 
-        convertIntentionsUtils.convertConsumerToConsumerStateful(
+        convertIntentionsUtils.convertToConsumerStateful(
             project,
             editor,
             element
