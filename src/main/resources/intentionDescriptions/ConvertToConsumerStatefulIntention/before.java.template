@@ -1,0 +1,15 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class Example extends ConsumerWidget {
+  final String text;
+
+  const Example(this.text, {super.key});
+
+  void _exampleFunction(){}
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Text(text);
+  }
+}

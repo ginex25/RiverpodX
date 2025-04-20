@@ -29,5 +29,10 @@
             <className>com.github.ginex25.riverpodx.intentions.ConvertToConsumerStatefulIntention</className>
             <category>RiverpodX</category>
         </intentionAction>
+        <intentionAction>
+            <language>Dart</language>
+            <className>com.github.ginex25.riverpodx.intentions.ConvertToConsumerIntention</className>
+            <category>RiverpodX</category>
+        </intentionAction>
     </extensions>
 </idea-plugin>

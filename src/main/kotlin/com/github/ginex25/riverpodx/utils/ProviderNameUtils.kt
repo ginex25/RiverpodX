@@ -8,13 +8,32 @@ object ProviderNameUtils {
         return input.replaceFirstChar { it.lowercaseChar() }
     }
 
-    // Riverpod automatically generates a provider name by appending "Provider"
-    // to the original function name with the first letter in lowercase.
-    // We index this generated name to support "go to provider" functionality.
+    /**
+     * Generates the provider name for a given base name according to Riverpod conventions.
+     *
+     * Riverpod appends "Provider" to the original function name,
+     * using a lowercase first letter of the base name.
+     *
+     * Example: `MyFunction` -> `myFunctionProvider`
+     *
+     * @param base The original function name.
+     * @return The generated provider name.
+     */
     fun toGeneratedProviderName(base: String): String {
         return "${toLowerCaseFirstLetter(base)}Provider"
     }
 
+    /**
+     * Extracts the provider name from the given text at a specific offset.
+     *
+     * - If the entire text matches the provider pattern, it is returned as-is.
+     * - Otherwise, searches for a word around the given offset using `wordRegex`.
+     * - Returns the word found, or an empty string if none is found.
+     *
+     * @param text The input text.
+     * @param offset The character offset within the text.
+     * @return The provider name at the offset, or an empty string.
+     */
     fun getProviderNameAtOffset(text: String, offset: Int): String {
         if (providerRegex.matches(text))
             return text
