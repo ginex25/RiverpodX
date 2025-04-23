@@ -17,6 +17,7 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>io.flutter</depends>
     <depends>org.jetbrains.android</depends>
+    <depends>Dart</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <defaultLiveTemplates file="/liveTemplates/snippets.xml"/>
@@ -24,6 +25,8 @@
                              implementation="com.github.ginex25.riverpodx.snippets.SnippetsContext"/>
         <fileBasedIndex implementation="com.github.ginex25.riverpodx.index.ProviderIndex"/>
         <gotoDeclarationHandler implementation="com.github.ginex25.riverpodx.navigation.CustomGotoDeclarationHandler"/>
+        <findUsagesHandlerFactory
+                implementation="com.github.ginex25.riverpodx.navigation.CustomFindUsageHandlerFactory" order="first"/>
         <intentionAction>
             <language>Dart</language>
             <className>com.github.ginex25.riverpodx.intentions.ConvertToConsumerStatefulIntention</className>
