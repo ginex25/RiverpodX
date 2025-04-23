@@ -154,6 +154,7 @@ class ConvertIntentionsUtils {
                 append("    ${customCode.first}\n")
             }
 
+            append("  @override\n")
             if (buildMethod != null) {
                 var buildMethodText = buildMethod.text.replace(
                     "Widget build(BuildContext context)", "Widget build(BuildContext context, WidgetRef ref)"
