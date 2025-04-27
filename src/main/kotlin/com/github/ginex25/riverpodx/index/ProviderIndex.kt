@@ -13,8 +13,10 @@ import java.io.DataOutput
 
 class ProviderIndex : FileBasedIndexExtension<String, ProviderInfo>() {
 
-
-    private val providerNameRegex = Regex("@riverpod\\s+[A-Za-z<>\\d]+\\s+(\\w+)", RegexOption.MULTILINE)
+    private val providerNameRegex = Regex(
+        "@[Rr]iverpod(?:\\([^)]+\\))?\\s+[A-Za-z<>\\d]+\\s+(\\w+)",
+        RegexOption.MULTILINE
+    )
 
     override fun getName(): ID<String, ProviderInfo> {
         return KEY
@@ -71,7 +73,7 @@ class ProviderIndex : FileBasedIndexExtension<String, ProviderInfo>() {
     }
 
     override fun getVersion(): Int {
-        return 1
+        return 2
     }
 }
 
