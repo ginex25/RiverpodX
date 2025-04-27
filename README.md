@@ -67,6 +67,13 @@ If you have suggestions or improvements for the plugin, feel free to contribute!
 
 Thank you for helping improve the plugin!
 
+## Changelog
+
+All notable changes to this project will be documented in the [Changelog](CHANGELOG.md).
+
+For detailed information on each release, please visit
+the [Releases page](https://github.com/ginex25/RiverpodX/releases).
+
 ## License
 
 This plugin is licensed under the Apache License Version 2.0. See the [LICENSE](LICENSE) file for more details.
