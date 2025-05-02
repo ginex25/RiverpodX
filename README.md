@@ -17,12 +17,12 @@ specifically designed for working with Riverpod.
 
 #### Generator Syntax
 
-| Shortcut                            | Description                                   |
-|-------------------------------------|:----------------------------------------------|
-| `riverpodPart`                      | Creates a part statement                      |
-| `riverpodGeneratorVariable`         | Create a variable using the generator         |
-| `riverpodGeneratorFutureVariable`   | Create a future variable using the generator  |
-| `riverpodGeneratorNotifierProvider` | Create a NotifierProvider using the generator |
+| Shortcut                  | Description                                   |
+|---------------------------|:----------------------------------------------|
+| `riverpodPart`            | Creates a part statement                      |
+| `generatorVariable`       | Create a variable using the generator         |
+| `generatorFutureVariable` | Create a future variable using the generator  |
+| `notifierProvider`        | Create a NotifierProvider using the generator |
 
 > **Note:** All providers can be created with `keepAlive` and `family`.
 
@@ -30,13 +30,14 @@ specifically designed for working with Riverpod.
 
 #### Common Syntax
 
-| Shortcut                 | Description                                         |
-|--------------------------|:----------------------------------------------------|
-| `consumer`               | New Consumer                                        |
-| `consumerWidget`         | New ConsumerWidget                                  |
-| `consumerStatefulWidget` | New ConsumerStatefulWidget                          |
-| `provider*`              | New Provider (suffix modifier: e.g., `autoDispose`) |
-| `futureProvider*`        | New FutureProvider                                  |
+| Shortcut                 | Description                                                      |
+|--------------------------|:-----------------------------------------------------------------|
+| `consumer`               | New Consumer                                                     |
+| `consumerWidget`         | New ConsumerWidget                                               |
+| `consumerStatefulWidget` | New ConsumerStatefulWidget                                       |
+| `provider`*              | New Provider (suffix modifier: e.g., `autoDispose`)              |
+| `futureProvider`*        | New FutureProvider                                               |
+| `when`                   | Handle AsyncValue using when with data, error, and loading cases |
 
 > **Note:** ( * ) is suffix modifier, ex: autoDispose, family
 ---
