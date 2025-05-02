@@ -15,7 +15,9 @@ class ConvertToConsumerStatefulIntention : PsiElementBaseIntentionAction(), Inte
     override fun getText(): String = "Convert to ConsumerStatefulWidget"
 
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
-        return convertIntentionsUtils.isConsumerWidget(element) || convertIntentionsUtils.isStatelessWidget(element)
+        return convertIntentionsUtils.isConsumerWidget(element)
+                || convertIntentionsUtils.isStatelessWidget(element)
+                || convertIntentionsUtils.isStatefulWidget(element)
     }
 
     override fun startInWriteAction(): Boolean = true

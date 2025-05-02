@@ -20,19 +20,19 @@ class ConvertIntentionsUtils {
     }
 
     fun isConsumerStatefulWidget(psiElement: PsiElement): Boolean {
-        return psiElement.text.contains("ConsumerStatefulWidget") && isDartClass(psiElement)
+        return psiElement.text.equals("ConsumerStatefulWidget") && isDartClass(psiElement)
     }
 
     fun isStatelessWidget(psiElement: PsiElement): Boolean {
-        return psiElement.text.contains("StatelessWidget") && isDartClass(psiElement)
+        return psiElement.text.equals("StatelessWidget") && isDartClass(psiElement)
     }
 
     fun isStatefulWidget(psiElement: PsiElement): Boolean {
-        return psiElement.text.contains("StatefulWidget") && isDartClass(psiElement)
+        return psiElement.text.equals("StatefulWidget") && isDartClass(psiElement)
     }
 
     /**
-     * Converts a regular StatefulWidget into a ConsumerStatefulWidget with a corresponding ConsumerState class.
+     * Converts a regular ConsumerWidget or StatelessWidget into a ConsumerStatefulWidget with a corresponding ConsumerState class.
      *
      * - Extracts fields, constructor, and custom code from the original class.
      * - Adjusts field references by prepending `widget.` where necessary.
@@ -44,7 +44,7 @@ class ConvertIntentionsUtils {
      * @param editor The active editor.
      * @param element The PSI element used to locate the Dart class.
      */
-    fun convertToConsumerStateful(project: Project, editor: Editor, element: PsiElement) {
+    private fun convertStatelessToStateful(project: Project, editor: Editor, element: PsiElement) {
         val dartClass = getDartClass(element) ?: return
 
         val className = dartClass.name ?: return
@@ -102,12 +102,47 @@ class ConvertIntentionsUtils {
             val newClassText = stateClass + widgetClass
 
             applyWriteCommandAction(
-                project,
-                editor,
-                dartClass.textRange.startOffset,
-                dartClass.textRange.endOffset,
-                newClassText
+                project, editor, dartClass.textRange.startOffset, dartClass.textRange.endOffset, newClassText
             )
+        }
+    }
+
+    /**
+     * Converts a regular StatefulWidget into a ConsumerStatefulWidget with a corresponding ConsumerState class.
+     *
+     * @param project The current IntelliJ project.
+     * @param editor The active editor.
+     * @param element The PSI element used to locate the Dart class.
+     */
+    private fun convertStatefulToConsumerStateful(project: Project, editor: Editor, element: PsiElement) {
+        val dartClass = getDartClass(element) ?: return
+
+        val file = PsiDocumentManager.getInstance(project).getPsiFile(editor.document) ?: return
+
+        val stateClass = file.children.filterIsInstance<DartClass>()
+            .firstOrNull { it.name?.contains(dartClass.name + "State") == true } ?: return
+
+
+        val stfulWidget =
+            dartClass.text.replace("StatefulWidget", "ConsumerStatefulWidget").replace("State<", "ConsumerState<")
+
+        val stateWidget = stateClass.text.replace("State<", "ConsumerState<")
+
+        applyWriteCommandAction(
+            project,
+            editor,
+            dartClass.textRange.startOffset,
+            stateClass.textRange.endOffset,
+            stfulWidget + stateWidget
+        )
+    }
+
+
+    fun convertToConsumerStateful(project: Project, editor: Editor, element: PsiElement) {
+        if (isStatefulWidget(element)) {
+            convertStatefulToConsumerStateful(project, editor, element)
+        } else {
+            convertStatelessToStateful(project, editor, element)
         }
     }
 
@@ -124,7 +159,7 @@ class ConvertIntentionsUtils {
      * @param editor The active editor.
      * @param element The PSI element used to locate the Dart class.
      */
-    fun convertToConsumer(project: Project, editor: Editor, element: PsiElement) {
+    private fun convertStatefulToStateless(project: Project, editor: Editor, element: PsiElement) {
         val dartClass = getDartClass(element) ?: return
 
         val className = dartClass.name ?: return
@@ -179,21 +214,33 @@ class ConvertIntentionsUtils {
         newClassText = removeWidgetReferences(newClassText, fields)
 
         applyWriteCommandAction(
-            project,
-            editor,
-            dartClass.textRange.startOffset,
-            stateClass.textRange.endOffset,
-            newClassText
+            project, editor, dartClass.textRange.startOffset, stateClass.textRange.endOffset, newClassText
         )
     }
 
 
+    fun convertToConsumer(project: Project, editor: Editor, element: PsiElement) {
+        if (isStatelessWidget(element)) {
+            val dartClass = getDartClass(element) ?: return
+
+            val text = dartClass.text.replace("StatelessWidget", "ConsumerWidget")
+                .replace("Widget build(BuildContext context)", "Widget build(BuildContext context, WidgetRef ref)")
+
+            applyWriteCommandAction(
+                project,
+                editor,
+                dartClass.textRange.startOffset,
+                dartClass.textRange.endOffset,
+                text
+            )
+        } else {
+            convertStatefulToStateless(project, editor, element)
+        }
+    }
+
+
     private fun applyWriteCommandAction(
-        project: Project,
-        editor: Editor,
-        startOffset: Int,
-        endOffset: Int,
-        newClassText: String
+        project: Project, editor: Editor, startOffset: Int, endOffset: Int, newClassText: String
     ) {
         WriteCommandAction.runWriteCommandAction(project) {
             val document = editor.document

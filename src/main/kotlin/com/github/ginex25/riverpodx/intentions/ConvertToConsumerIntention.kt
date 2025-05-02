@@ -12,12 +12,12 @@ class ConvertToConsumerIntention : PsiElementBaseIntentionAction(), IntentionAct
 
     override fun getFamilyName(): String = text
 
-    override fun getText(): String = "Convert to ConsumerStateful"
+    override fun getText(): String = "Convert to ConsumerWidget"
 
     override fun isAvailable(project: Project, editor: Editor?, element: PsiElement): Boolean {
-        return convertIntentionsUtils.isConsumerStatefulWidget(element) || convertIntentionsUtils.isStatefulWidget(
-            element
-        )
+        return convertIntentionsUtils.isConsumerStatefulWidget(element)
+                || convertIntentionsUtils.isStatelessWidget(element)
+                || convertIntentionsUtils.isStatefulWidget(element)
     }
 
     override fun invoke(project: Project, editor: Editor?, element: PsiElement) {
