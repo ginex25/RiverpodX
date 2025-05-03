@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.github.ginex25.RiverpodX</id>
     <name>RiverpodX</name>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
     <vendor url="https://github.com/ginex25/RiverpodX">ginex25</vendor>
     <idea-version since-build="241.0" until-build="251.*"/>
 
@@ -20,6 +20,15 @@
     </description>
 
     <change-notes><![CDATA[
+        <h2>1.2.0</h2>
+        <ul>
+            <li>Support for converting <code>StatelessWidget</code> and <code>StatefulWidget</code> to
+                <code>ConsumerWidget</code> or <code>ConsumerStatefulWidget</code>.
+            </li>
+            <li>Added descriptions for intentions to improve clarity when converting widgets.</li>
+            <li>Snippet group names have been renamed for clarity.</li>
+            <li>Snippets have been updated and improved.</li>
+        </ul>
         <h2>1.1.0</h2>
         <ul>
           <li>Updated until-build to 251.* for compatibility with IntelliJ IDEA 2025.1</li>
