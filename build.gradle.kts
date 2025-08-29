@@ -5,7 +5,7 @@ plugins {
 }
 
 group = "com.github.ginex25"
-version = "1.2.0"
+version = "1.3.0"
 
 repositories {
     mavenCentral()
@@ -32,7 +32,7 @@ tasks {
 
     patchPluginXml {
         sinceBuild.set("241")
-        untilBuild.set("251.*")
+        untilBuild.set("252.*")
     }
 
     signPlugin {
@@ -49,7 +49,8 @@ tasks {
         ideVersions.set(
             listOf(
                 "241.19416.15",
-                "251.23774.435"
+                "251.23774.435",
+                "252.19874.12"
             )
         )
     }
