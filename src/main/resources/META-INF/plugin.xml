@@ -20,6 +20,10 @@
     </description>
 
     <change-notes><![CDATA[
+        <h2>1.3.0</h2>
+        <ul>
+            <li>Support for IntelliJ IDEA 2025.2 (build 252.*)</li>
+        </ul>
         <h2>1.2.0</h2>
         <ul>
             <li>Support for converting <code>StatelessWidget</code> and <code>StatefulWidget</code> to
