@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Replaced `runPluginVerifier` with `pluginVerification` DSL
     - Configured signPlugin and publishPlugin tasks via `intellijPlatform`
     - Removed deprecated `intellij {}` usage
+- Updated `untilBuild` to `253.*` for compatibility with IntelliJ 2025.3
 
 ## [1.3.0](https://github.com/ginex25/RiverpodX/releases/tag/v1.3.0) - 2025-08-29
 

@@ -27,6 +27,7 @@ intellijPlatform {
         version = "1.3.0"
         ideaVersion {
             sinceBuild = "241"
+            untilBuild = "253.*"
         }
     }
     signing {
@@ -40,6 +41,7 @@ intellijPlatform {
     pluginVerification {
         ides {
             recommended()
+            create("IU", "2025.3")
         }
     }
 }
