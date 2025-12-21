@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## [1.4.0](https://github.com/ginex25/RiverpodX/releases/tag/v1.4.0) - 2025-12-21
 
 ### Fixed
 
@@ -16,7 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Refactored provider navigation to use offset-based positioning instead of line numbers.
     - Navigation now uses the exact offset in the file for more accurate and stable GoToDefinition.
-    - Line numbers are no longer stored in the index; offsets allow better handling of file edits.
 
 ### Build
 

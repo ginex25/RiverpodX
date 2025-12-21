@@ -22,12 +22,18 @@ dependencies {
 
 intellijPlatform {
     pluginConfiguration {
-        id = "com.github.ginex25"
+        id = "com.github.ginex25.RiverpodX"
         name = "RiverpodX"
-        version = "1.3.0"
+        version = "1.4.0"
         ideaVersion {
             sinceBuild = "241"
             untilBuild = "253.*"
+        }
+        changeNotes = file("release/RELEASE_CHANGE_NOTES.html").readText()
+        description = file("release/DESCRIPTION.html").readText()
+        vendor {
+            name = "ginex25"
+            url = "https://github.com/ginex25/RiverpodX"
         }
     }
     signing {

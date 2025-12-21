@@ -1,49 +1,4 @@
 <idea-plugin>
-    <id>com.github.ginex25.RiverpodX</id>
-    <name>RiverpodX</name>
-    <vendor url="https://github.com/ginex25/RiverpodX">ginex25</vendor>
-    <description><![CDATA[
-        Boost your Flutter development with Riverpod! This plugin enhances your workflow by offering a set of useful tools specifically designed for working with Riverpod.<br>
-        <br>
-        <b> Features:</b>
-        <ul>
-            <li><b>GoTo Provider Declaration</b>: Quickly navigate to the provider’s declaration.</li>
-            <li><b>Find Usages for Providers</b>: Locate all usages of a provider in the project.</li>
-            <li><b>Code Snippets</b>: Use predefined code snippets to save time.</li>
-            <li><b>Convert ConsumerWidget to ConsumerStatefulWidget (and vice versa)</b>: Easily switch between ConsumerWidget and
-      ConsumerStatefulWidget.</li>
-        </ul>
-    ]]>
-    </description>
-
-    <change-notes><![CDATA[
-        <h2>1.3.0</h2>
-        <ul>
-            <li>Support for IntelliJ IDEA 2025.2 (build 252.*)</li>
-        </ul>
-        <h2>1.2.0</h2>
-        <ul>
-            <li>Support for converting <code>StatelessWidget</code> and <code>StatefulWidget</code> to
-                <code>ConsumerWidget</code> or <code>ConsumerStatefulWidget</code>.
-            </li>
-            <li>Added descriptions for intentions to improve clarity when converting widgets.</li>
-            <li>Snippet group names have been renamed for clarity.</li>
-            <li>Snippets have been updated and improved.</li>
-        </ul>
-        <h2>1.1.0</h2>
-        <ul>
-          <li>Updated until-build to 251.* for compatibility with IntelliJ IDEA 2025.1</li>
-          <li>Added support for recognizing providers with `@Riverpod` annotations, including support for GoToDefinition functionality.</li>
-          <li><strong>Note:</strong> After updating to this version, you may need to invalidate your IDE cache if you encounter issues with navigation. You can do this by selecting <code>File > Invalidate Caches... > Invalidate and Restart</code> in IntelliJ IDEA.</li>
-        </ul>
-        <h2>1.0.0</h2>
-        <ul>
-          <li>Initial release</li>
-        </ul>
-    ]]>
-    </change-notes>
-
-
     <depends>com.intellij.modules.platform</depends>
     <depends>io.flutter</depends>
     <depends>org.jetbrains.android</depends>
