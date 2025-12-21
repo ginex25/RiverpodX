@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Changed
+
+- Refactored provider navigation to use offset-based positioning instead of line numbers.
+    - Navigation now uses the exact offset in the file for more accurate and stable GoToDefinition.
+    - Line numbers are no longer stored in the index; offsets allow better handling of file edits.
+
 ### Build
 
 - Migrate to Gradle IntelliJ Plugin 2.x

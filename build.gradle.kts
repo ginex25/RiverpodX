@@ -14,7 +14,7 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        create("IC", "2024.1")
+        create("IC", "2024.1.7")
         plugins(providers.gradleProperty("platformPlugins").map { it.split(',') })
         bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
     }

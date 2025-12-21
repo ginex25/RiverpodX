@@ -37,9 +37,7 @@ class ProviderIndex : FileBasedIndexExtension<String, ProviderInfo>() {
 
                 val generatedName = toGeneratedProviderName(lowerCaseOriginalName)
 
-                val lineNumber = inputData.psiFile.fileDocument.getLineNumber(providerMatch.range.last) + 1
-
-                result[generatedName] = ProviderInfo(inputData.file.path, lineNumber)
+                result[generatedName] = ProviderInfo(inputData.file.path, providerMatch.range.first)
             }
 
             result
@@ -54,7 +52,7 @@ class ProviderIndex : FileBasedIndexExtension<String, ProviderInfo>() {
         return object : DataExternalizer<ProviderInfo> {
             override fun save(out: DataOutput, value: ProviderInfo) {
                 out.writeUTF(value.filePath)
-                out.writeInt(value.lineNumber)
+                out.writeInt(value.offset)
             }
 
             override fun read(`in`: DataInput): ProviderInfo {
@@ -73,7 +71,7 @@ class ProviderIndex : FileBasedIndexExtension<String, ProviderInfo>() {
     }
 
     override fun getVersion(): Int {
-        return 2
+        return 3
     }
 }
 

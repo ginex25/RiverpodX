@@ -6,9 +6,7 @@ import com.github.ginex25.riverpodx.utils.ProviderNameUtils.getProviderNameAtOff
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationHandler
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.ScrollType
-import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.fileEditor.TextEditor
+import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
@@ -32,6 +30,7 @@ class CustomGotoDeclarationHandler : GotoDeclarationHandler {
         val wordAtCursor = getProviderNameAtOffset(text, offset)
 
 
+        println("wordAtCursor: $wordAtCursor")
         val project = sourceElement.project
         val providerInfo = getProviderInfos(wordAtCursor, project)
 
@@ -45,31 +44,17 @@ class CustomGotoDeclarationHandler : GotoDeclarationHandler {
 
             val psiFile: PsiFile = PsiManager.getInstance(project).findFile(file) ?: return@mapNotNull null
 
-            openFileAtLine(project, psiFile, info.lineNumber)
+            openFileAtOffset(project, psiFile, info.offset)
 
             psiFile
         }.toTypedArray()
     }
 
-    private fun openFileAtLine(project: Project, psiFile: PsiFile, lineNumber: Int) {
+    private fun openFileAtOffset(project: Project, psiFile: PsiFile, offset: Int) {
         ApplicationManager.getApplication().invokeLater {
-            val fileEditorManager = FileEditorManager.getInstance(project)
-            val fileEditors = fileEditorManager.openFile(psiFile.virtualFile, true)
-
-            for (fileEditor in fileEditors) {
-                if (fileEditor is TextEditor) {
-                    val editor: Editor = fileEditor.editor
-
-                    val document = editor.document
-                    val targetOffset = document.getLineStartOffset(lineNumber - 1)
-                    editor.caretModel.moveToOffset(targetOffset)
-
-                    editor.scrollingModel.scrollToCaret(ScrollType.CENTER)
-                    break
-                }
-            }
+            OpenFileDescriptor(project, psiFile.virtualFile, offset)
+                .navigate(true)
         }
-
     }
 
 
