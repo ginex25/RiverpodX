@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+
+- CustomFindUsageHandler now correctly finds provider overrides in `ProviderScope`.
+    - Usages like `myProvider.overrideWithValue` are now detected
+
 ### Changed
 
 - Refactored provider navigation to use offset-based positioning instead of line numbers.

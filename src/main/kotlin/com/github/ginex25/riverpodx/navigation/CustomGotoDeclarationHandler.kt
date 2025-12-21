@@ -29,8 +29,6 @@ class CustomGotoDeclarationHandler : GotoDeclarationHandler {
         val text = sourceElement.text
         val wordAtCursor = getProviderNameAtOffset(text, offset)
 
-
-        println("wordAtCursor: $wordAtCursor")
         val project = sourceElement.project
         val providerInfo = getProviderInfos(wordAtCursor, project)
 

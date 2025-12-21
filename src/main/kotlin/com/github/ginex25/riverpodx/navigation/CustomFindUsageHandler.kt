@@ -55,8 +55,7 @@ class CustomFindUsageHandler(element: PsiElement) : FindUsagesHandler(element) {
         for (virtualFile in files) {
             val psiFile = psiManager.findFile(virtualFile) ?: continue
             val text = psiFile.text
-
-
+            
             if (!text.contains(providerName) && !text.contains(psiElement.text)) continue
 
             psiFile.accept(object : DartRecursiveVisitor() {
@@ -87,6 +86,10 @@ class CustomFindUsageHandler(element: PsiElement) : FindUsagesHandler(element) {
                                 foundElements.add(o.element)
                             }
                         }
+                    }
+
+                    if (callee.text.startsWith("$providerName.overrideWith")) {
+                        foundElements.add(o.element)
                     }
                 }
             })
