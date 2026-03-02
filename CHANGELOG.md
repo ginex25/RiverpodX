@@ -5,6 +5,32 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0](https://github.com/ginex25/RiverpodX/releases/tag/v1.5.0) - 2026-03-02
+
+### Added
+
+- Support for IntelliJ IDEA 2026 (build 261.*)
+
+### Changed
+
+- Updated platformPlugins to:
+    - io.flutter:90.0.0
+    - Dart:503.0.0
+
+- Upgraded Kotlin JVM version from 1.9.25 to 2.2.0
+
+- Adjusted Gradle configuration to align with Kotlin 2.2.0 and updated platform plugins
+
+### Build
+
+- Updated untilBuild to 261.* for compatibility with IntelliJ IDEA 2026.1
+
+- Applied required Gradle changes following the Kotlin JVM upgrade
+
+### Changed
+
+- Updated `until-build` to `261.*` for compatibility with IntelliJ IDEA 2026.1.
+
 ## [1.4.0](https://github.com/ginex25/RiverpodX/releases/tag/v1.4.0) - 2025-12-21
 
 ### Fixed

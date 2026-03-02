@@ -1,6 +1,10 @@
+import org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+
 plugins {
     id("java")
-    id("org.jetbrains.kotlin.jvm") version "1.9.25"
+    id("org.jetbrains.kotlin.jvm") version "2.2.0"
     id("org.jetbrains.intellij.platform") version "2.10.5"
 }
 
@@ -14,20 +18,62 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        create("IC", "2024.1.7")
+        create("IC", "2025.1.7")
         plugins(providers.gradleProperty("platformPlugins").map { it.split(',') })
         bundledPlugins(providers.gradleProperty("platformBundledPlugins").map { it.split(',') })
     }
 }
 
+val javaVersion = providers.gradleProperty("javaVersion").get()
+var jvmVersion: JvmTarget
+jvmVersion = when (javaVersion) {
+    "17" -> {
+        JvmTarget.JVM_17
+    }
+
+    "21" -> {
+        JvmTarget.JVM_21
+    }
+
+    else -> {
+        throw IllegalArgumentException("javaVersion must be defined in the product matrix as either \"17\" or \"21\"")
+    }
+}
+
+kotlin {
+    compilerOptions {
+        apiVersion.set(KotlinVersion.KOTLIN_2_1)
+        jvmTarget = jvmVersion
+    }
+}
+
+
+var javaCompatibilityVersion: JavaVersion
+javaCompatibilityVersion = when (javaVersion) {
+    "17" -> {
+        JavaVersion.VERSION_17
+    }
+
+    "21" -> {
+        JavaVersion.VERSION_21
+    }
+
+    else -> {
+        throw IllegalArgumentException("javaVersion must be defined in the product matrix as either \"17\" or \"21\"")
+    }
+}
+
+
+java {
+    sourceCompatibility = javaCompatibilityVersion
+    targetCompatibility = javaCompatibilityVersion
+}
+
 intellijPlatform {
     pluginConfiguration {
-        id = "com.github.ginex25.RiverpodX"
-        name = "RiverpodX"
-        version = "1.4.0"
         ideaVersion {
-            sinceBuild = "241"
-            untilBuild = "253.*"
+            sinceBuild = "251"
+            untilBuild = "261.*"
         }
         changeNotes = file("release/RELEASE_CHANGE_NOTES.html").readText()
         description = file("release/DESCRIPTION.html").readText()
@@ -45,20 +91,11 @@ intellijPlatform {
         token.set(System.getenv("PUBLISH_TOKEN"))
     }
     pluginVerification {
+        verificationReportsFormats = VerifyPluginTask.VerificationReportsFormats.ALL
+        subsystemsToCheck = VerifyPluginTask.Subsystems.ALL
         ides {
             recommended()
-            create("IU", "2025.3")
+            create("IU", "261.21849.20")
         }
-    }
-}
-
-
-tasks {
-    withType<JavaCompile> {
-        sourceCompatibility = "17"
-        targetCompatibility = "17"
-    }
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "17"
     }
 }
