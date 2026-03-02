@@ -27,25 +27,11 @@ dependencies {
 val pluginVersion = providers.gradleProperty("pluginVersion").get()
 version = pluginVersion
 val javaVersion = providers.gradleProperty("javaVersion").get()
-var jvmVersion: JvmTarget
-jvmVersion = when (javaVersion) {
-    "17" -> {
-        JvmTarget.JVM_17
-    }
-
-    "21" -> {
-        JvmTarget.JVM_21
-    }
-
-    else -> {
-        throw IllegalArgumentException("javaVersion must be defined in the product matrix as either \"17\" or \"21\"")
-    }
-}
 
 kotlin {
     compilerOptions {
         apiVersion.set(KotlinVersion.KOTLIN_2_1)
-        jvmTarget = jvmVersion
+        jvmTarget = JvmTarget.fromTarget(javaVersion)
     }
 }
 
