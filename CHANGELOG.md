@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1](https://github.com/ginex25/RiverpodX/releases/tag/v1.5.1) - 2026-03-02
+
+### Fixed
+
+- Resolved incompatibility with IntelliJ IDEA 2026.1 (build 261.*) caused by missing mandatory.
+
+- Plugin now installs correctly without dependency issues.
+
+### Build
+
+- Updated Gradle buildPlugin task to set archiveVersion to ${project.version} for current versioning.
+
+- Ensures packaged plugin archive uses proper versioning and naming conventions.
+
 ## [1.5.0](https://github.com/ginex25/RiverpodX/releases/tag/v1.5.0) - 2026-03-02
 
 ### Added

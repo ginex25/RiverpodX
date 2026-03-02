@@ -24,6 +24,8 @@ dependencies {
     }
 }
 
+val pluginVersion = providers.gradleProperty("pluginVersion").get()
+version = pluginVersion
 val javaVersion = providers.gradleProperty("javaVersion").get()
 var jvmVersion: JvmTarget
 jvmVersion = when (javaVersion) {
@@ -47,26 +49,9 @@ kotlin {
     }
 }
 
-
-var javaCompatibilityVersion: JavaVersion
-javaCompatibilityVersion = when (javaVersion) {
-    "17" -> {
-        JavaVersion.VERSION_17
-    }
-
-    "21" -> {
-        JavaVersion.VERSION_21
-    }
-
-    else -> {
-        throw IllegalArgumentException("javaVersion must be defined in the product matrix as either \"17\" or \"21\"")
-    }
-}
-
-
 java {
-    sourceCompatibility = javaCompatibilityVersion
-    targetCompatibility = javaCompatibilityVersion
+    sourceCompatibility = JavaVersion.toVersion(javaVersion)
+    targetCompatibility = JavaVersion.toVersion(javaVersion)
 }
 
 intellijPlatform {
@@ -75,6 +60,9 @@ intellijPlatform {
             sinceBuild = "251"
             untilBuild = "261.*"
         }
+        id = "com.github.ginex25.RiverpodX"
+        name = "RiverpodX"
+        version = pluginVersion
         changeNotes = file("release/RELEASE_CHANGE_NOTES.html").readText()
         description = file("release/DESCRIPTION.html").readText()
         vendor {
@@ -98,4 +86,9 @@ intellijPlatform {
             create("IU", "261.21849.20")
         }
     }
+}
+
+tasks.named("buildPlugin", Zip::class.java) {
+    archiveBaseName.set("RiverpodX")
+    archiveVersion.set("${project.version}")
 }
